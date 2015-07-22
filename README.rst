@@ -1,8 +1,7 @@
 riboseqr_wrapper
 ================
 `riboSeqR <http://bioconductor.org/packages/3.0/bioc/html/riboSeqR.html>`_
-integration for `Galaxy <http://galaxyproject.org/>`_ and
-`RiboGalaxy <http://ribogalaxy.ucc.ie/>`_.
+integration for `RiboGalaxy <http://ribogalaxy.ucc.ie/>`_ and `Galaxy <http://galaxyproject.org/>`_.
 
 Included tools
 --------------
@@ -69,3 +68,6 @@ riboSeqR package. The commands used were ::
 
 rsem_chlamy236_deNovo.transcripts.fa - sample data from the riboSeqR package.
 
+Bugs/Issues?
+------------
+Please report here https://github.com/vimalkumarvelayudhan/riboseqr_wrapper/issues
