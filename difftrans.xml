@@ -1,0 +1,149 @@
+<tool id="difftrans" name="Differential Translation Analysis" version="0.1.0">
+    <description>
+        (Step 4) Get Ribo and RNA-Seq counts with riboSeqR. Perform differential
+        translation analysis with baySeq.
+    </description>
+    <requirements>
+        <requirement type="package" version="3.1.2">R</requirement>
+        <requirement type="package" version="6.2">readline</requirement>
+        <requirement type="package" version="2.3.10">rpy2</requirement>
+        <requirement type="package" version="0.4.0">riboseqr_wrapper_deps
+        </requirement>
+    </requirements>
+    <stdio>
+        <exit_code range="1:" level="fatal" description="Error"/>
+    </stdio>
+    <command interpreter="python">riboseqr/difftrans.py
+        --rdata_load "$rdata_load"
+        --slice_lengths "$slice_lengths"
+        --frames "$frames"
+        --group1 "$group1"
+        --group2 "$group2"
+        --num_counts "$num_counts"
+        --normalize "$normalize"
+        --html_file "$html_file"
+        --output_path "$html_file.files_path"
+    </command>
+    <inputs>
+        <param name="rdata_load" format="RData" type="data"
+               label="Select Metagene analysis (R data file)"
+               multiple="false">
+            <validator type="expression"
+                       message="Please check if the correct RDA file is selected">value.name == "Metagene analysis (R data file)"</validator>
+        </param>
+        <param name="slice_lengths" type="text"
+               label="&lt;h4&gt;&lt;font color=&quot;#666666&quot;&gt;Ribo and RNA counts (riboSeqR)&lt;/font&gt;&lt;/h4&gt;Lengths of ribosome footprints to inform count data"
+               value="27,28">
+            <validator type="empty_field" message="Field requires a value"/>
+        </param>
+        <param name="frames" type="text" label="Frames corresponding to the lengths of ribosome footprints given above"
+               value="0,2">
+            <validator type="empty_field" message="Field requires a value"/>
+        </param>
+        <param type="text" name="group1"
+               label="&lt;h4&gt;&lt;font color=&quot;#666666&quot;&gt;baySeq Analysis&lt;/font&gt;&lt;/h4&gt;Group (model) structure to test on the data"
+               help="ex. 1,1,1,1">
+            <validator type="empty_field" message="Field requires a value"/>
+        </param>
+        <param type="text" name="group2" label="and" help="ex. WT,WT,M,M">
+            <validator type="empty_field" message="Field requires a value"/>
+        </param>
+        <param type="integer" name="num_counts"
+               label="How many results to return? (top candidates for differential translation)"
+               value="10"/>
+
+        <param name="normalize" type="boolean" checked="no"
+               label="Normalize data?" falsevalue="FALSE" truevalue="TRUE"/>
+    </inputs>
+    <outputs>
+        <data format="html" name="html_file"
+              label="Differential Translation Analysis (HTML report)"/>
+    </outputs>
+    <!--<tests>-->
+    <!--<test>-->
+    <!--<param name="rdata_load" value="Metagene analysis (R data file)" ftype="RData" />-->
+    <!--<param name="slice_lengths" value="27,28"/>-->
+    <!--<param name="frames" value="0,2"/>-->
+    <!--<param name="group1" value="1,1,1,1"/>-->
+    <!--<param name="group2" value="WT,WT,M,M"/>-->
+    <!--<param name="normalize" checked="yes"/>-->
+    <!--<output name="html_file" file="Differential_Translation_Analysis_(HTML_report)">-->
+    <!--<extra_files type="file" name="RNACounts.csv" value="RNACounts.csv" ftype="csv"/>-->
+    <!--<extra_files type="file" name="RiboCounts.csv" value="RiboCounts.csv" ftype="csv"/>-->
+    <!--<extra_files type="file" name="TopCounts.csv" value="TopCounts.csv" ftype="csv"/>-->
+    <!--</output>-->
+    <!--</test>-->
+    <!--</tests>-->
+    <help>
+Differential Translation Analysis
+---------------------------------
+riboSeqR version: ``1.0.5``, baySeq version: ``2.0.50``.
+
+This tool can be used for obtaining the Ribo and RNA-Seq counts and
+finding the
+top candidates for differential translation using baySeq. The input is
+the
+R data file from the Metagene analysis step.
+
+How to use?
+-----------
+Inputs
+......
+Select *Metagene analysis (R data file)*, enter lengths of ribosome
+footprints
+and the frames. For baySeq analysis, enter the group model and the
+number of
+results to return. Please refer to the documentation for explanation of
+the
+options.
+
+Outputs
+.......
+The following files will be generated on completion:
+
+*Differential Translation Analysis (HTML report)*
+
+A HTML file with results, links to other output files and the R script
+used for
+the session.
+
+riboSeqR functions used
+.......................
+``sliceCounts``, ``rnaCounts``.
+
+baySeq functions used
+.....................
+``getLibsizes``, ``getPriors``, ``getLikelihoods``, ``topCounts``.
+
+For detailed description of the functions and the options used, please
+consult
+the riboSeqR and baySeq documentation.
+
+Links
+.....
+* `riboSeqR &lt;http://bioconductor.org/packages/3.0/bioc/html/riboSeqR.html&gt;`_
+* `baySeq &lt;http://bioconductor.org/packages/3.0/bioc/html/baySeq.html&gt;`_
+    </help>
+    <citations>
+        <citation type="bibtex">
+            @Manual{,
+            title = {riboSeqR: Analysis of sequencing data from ribosome
+            profiling experiments.},
+            author = {Thomas J. Hardcastle},
+            year = {2014},
+            note = {R package version 1.0.5},
+            }
+        </citation>
+        <citation type="bibtex">
+            @Manual{,
+            title = {baySeq: Empirical Bayesian analysis of patterns of
+            differential
+            expression in count data},
+            author = {Thomas J. Hardcastle},
+            year = {2012},
+            note = {R package version 2.0.50},
+            }
+        </citation>
+        <citation type="doi">10.1186/1471-2105-11-422</citation>
+    </citations>
+</tool>

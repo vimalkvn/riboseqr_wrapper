@@ -1,0 +1,92 @@
+<?xml version="1.0"?>
+<tool_dependency>
+    <package name="R" version="3.1.2">
+        <repository changeset_revision="9f2fddb9d6e2" name="package_r_3_1_2" 
+                    owner="iuc" prior_installation_required="True" 
+                    toolshed="http://toolshed.g2.bx.psu.edu" />
+    </package>
+    <package name="readline" version="6.2">
+        <repository changeset_revision="52d6f646b3b5" name="package_readline_6_2" 
+                    owner="iuc" prior_installation_required="True" 
+                    toolshed="http://toolshed.g2.bx.psu.edu" />
+    </package>
+    <package name="rpy2" version="2.3.10">
+        <install version="1.0">
+            <actions>
+                <action type="download_by_url">
+                    https://pypi.python.org/packages/source/r/rpy2/rpy2-2.3.10.tar.gz
+                </action>
+                <action type="set_environment_for_install">
+                    <repository changeset_revision="52d6f646b3b5" name="package_readline_6_2" 
+                                owner="iuc" toolshed="http://toolshed.g2.bx.psu.edu">
+                        <package name="readline" version="6.2" />
+                    </repository>
+                    <repository changeset_revision="9f2fddb9d6e2" name="package_r_3_1_2" 
+                                owner="iuc" toolshed="http://toolshed.g2.bx.psu.edu">
+                        <package name="R" version="3.1.2" />
+                    </repository>
+                </action>
+                <action type="shell_command">
+                    export PYTHONPATH=$PYTHONPATH:$INSTALL_DIR/lib/python &amp;&amp;
+                    export LDFLAGS="-L$READLINE_LIB_PATH -lreadline" &amp;&amp;
+                    export CPPFLAGS="-I$READLINE_INCLUDE_PATH" &amp;&amp;
+                    python setup.py build --r-home $R_HOME --r-home-lib $R_HOME/lib install --install-lib $INSTALL_DIR/lib/python
+                </action>
+                <action type="set_environment">
+                    <environment_variable action="append_to" name="PYTHONPATH">$INSTALL_DIR/lib/python</environment_variable>
+                    <environment_variable action="append_to" name="LD_LIBRARY_PATH">$ENV[READLINE_LIB_PATH]</environment_variable>
+                    <environment_variable action="append_to" name="LD_LIBRARY_PATH">$ENV[RHOME]/lib</environment_variable>
+                    <environment_variable action="append_to" name="LD_LIBRARY_PATH">$ENV[R_ROOT_DIR]/lib</environment_variable>
+                </action>
+            </actions>
+        </install>
+        <readme>rpy2 is a redesign and rewrite of rpy. It is providing a low-level interface to R, 
+            a proposed high-level interface, including wrappers to graphical libraries, 
+            as well as R-like structures and functions.
+            
+            http://rpy.sourceforge.net/rpy2.html
+        </readme>
+    </package>
+    <package name="riboseqr_wrapper_deps" version="0.4.0">
+        <install version="1.0">
+            <actions>
+                <action type="setup_r_environment">
+                    <repository changeset_revision="9f2fddb9d6e2" name="package_r_3_1_2" 
+                                owner="iuc" toolshed="http://toolshed.g2.bx.psu.edu">
+                        <package name="R" version="3.1.2" />
+                    </repository>
+                    <package>
+                        https://github.com/vimalkumarvelayudhan/riboseqr_wrapper_deps/raw/master/0.4.0/BiocGenerics_0.12.1.tar.gz?raw=true
+                    </package>
+                    <package>
+                        https://github.com/vimalkumarvelayudhan/riboseqr_wrapper_deps/raw/master/0.4.0/S4Vectors_0.4.0.tar.gz?raw=true
+                    </package>
+                    <package>
+                        https://github.com/vimalkumarvelayudhan/riboseqr_wrapper_deps/raw/master/0.4.0/IRanges_2.0.1.tar.gz?raw=true
+                    </package>
+                    <package>
+                        https://github.com/vimalkumarvelayudhan/riboseqr_wrapper_deps/raw/master/0.4.0/GenomeInfoDb_1.2.5.tar.gz?raw=true
+                    </package>
+                    <package>
+                        https://github.com/vimalkumarvelayudhan/riboseqr_wrapper_deps/raw/master/0.4.0/XVector_0.6.0.tar.gz?raw=true
+                    </package>
+                    <package>
+                        https://github.com/vimalkumarvelayudhan/riboseqr_wrapper_deps/raw/master/0.4.0/GenomicRanges_1.18.4.tar.gz?raw=true
+                    </package>
+                    <package>
+                        https://github.com/vimalkumarvelayudhan/riboseqr_wrapper_deps/raw/master/0.4.0/abind_1.4-3.tar.gz?raw=true
+                    </package>
+                    <package>
+                        https://github.com/vimalkumarvelayudhan/riboseqr_wrapper_deps/raw/master/0.4.0/baySeq_2.0.50.tar.gz?raw=true
+                    </package>
+                    <package>
+                        https://github.com/vimalkumarvelayudhan/riboseqr_wrapper_deps/raw/master/0.4.0/riboSeqR_1.0.5.tar.gz?raw=true
+                    </package>
+                </action>
+            </actions>
+        </install>
+        <readme>
+        Dependency installation for riboseqr_wrapper
+        </readme>
+    </package>
+</tool_dependency>

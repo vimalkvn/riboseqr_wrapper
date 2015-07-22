@@ -1,0 +1,161 @@
+<tool id="riboseqr_triplet_periodicity" name="Triplet Periodicity"
+      version="0.4.0">
+    <description>
+        (Step 2) Plot triplet periodicity for different read lengths.
+    </description>
+    <requirements>
+        <requirement type="package" version="3.1.2">R</requirement>
+        <requirement type="package" version="6.2">readline</requirement>
+        <requirement type="package" version="2.3.10">rpy2</requirement>
+        <requirement type="package" version="0.4.0">riboseqr_wrapper_deps</requirement>
+    </requirements>
+    <stdio>
+        <exit_code range="1:"  level="fatal" description="Error" />
+    </stdio>
+    <command interpreter="python">riboseqr/triplet.py
+        --rdata_load "$rdata_load"
+        --fasta_file "$fasta_file"
+        --start_codons "$start_codons"
+        --stop_codons "$stop_codons"
+        --include_lengths "$include_lengths"
+        --analyze_plot_lengths "$analyze_plot_lengths"
+        --text_legend "$text_legend"
+        --rdata_save "$rdata_save"
+        --html_file "$html_file"
+        --output_path "$html_file.files_path"
+    </command>
+    <inputs>
+        <param name="rdata_load" type="data" format="RData"
+               label="Select prepared riboSeqR input (R data file)"
+               multiple="false" optional="false"
+               help="&lt;br&gt;&lt;h4&gt;&lt;font color=&quot;#666666&quot;&gt;findCDS
+                     parameters&lt;/font&gt;&lt;/h4&gt;">
+            <validator type="expression"
+                       message="Please check if the correct RDA file is selected">value.name == "Prepare riboSeqR input (R data file)"</validator>
+        </param>
+
+        <param format="fasta" name="fasta_file" type="data"
+               label="Select FASTA file of the reference transcriptome"
+               help="This Fasta file is used to find start (ATG) and
+                     stop codons(TAG, TAA, TGA) in frame with one another. If no files
+                     are listed, you will need to upload a FASTA file of the reference
+                     transcriptome. Please note that the FASTA header of the transcriptome
+                     sequences must match the sequence names from the SAM file.">
+            <validator type="empty_field" message="Field requires a value"/>
+        </param>
+
+        <param name="start_codons" type="text" size="15" value="ATG"
+               label="Start codon(s) to use"
+               help="Default is ATG. Multiple values must be comma-separated.">
+            <validator type="empty_field" message="Field requires a value"/>
+        </param>
+
+        <param name="stop_codons" type="text" size="15" value="TAG, TAA, TGA"
+               label="Stop codon(s) to use"
+               help="Default is TAG, TAA, TGA. Multiple values must be comma-separated.
+                     &lt;h4&gt;&lt;font color=&quot;#666666&quot;&gt;frameCounting
+                     parameters&lt;/font&gt;&lt;/h4&gt;">
+            <validator type="empty_field" message="Field requires a value"/>
+        </param>
+
+        <param name="include_lengths" type="text"
+               label="Lengths of ribosome footprints
+                      to be included"
+               help="Here, you can specify the lengths of ribosome footprints to
+                     be included in the riboData object. &lt;br&gt;For example 25:30.
+                     Range, semi-colon separated. &lt;h4&gt;&lt;font color=&quot;#666666&quot;&gt;readingFrame
+                     parameters&lt;/font&gt;&lt;/h4&gt;" value="25:30"/>
+
+        <param name="analyze_plot_lengths" type="text"
+               label="Lengths of reads to be analysed for frame-shift, or to be plotted"
+               help="[Optional] If omitted, all lengths will be plotted.
+                     &lt;br&gt;For example 26:30. Range, semi-colon separated.
+                     &lt;h4&gt;&lt;font color=&quot;#666666&quot;&gt;plotFS
+                     parameters&lt;/font&gt;&lt;/h4&gt;" value="26:30"/>
+
+        <param name="text_legend" type="text" size="30"
+               value='Frame 0, Frame 1, Frame 2'
+               label="Text for legend used in the
+                      plot" help="Comma-separated values."/>
+    </inputs>
+    <outputs>
+        <data format="RData" name="rdata_save"
+              label="Triplet periodicity (R data file)"/>
+        <data format="html" name="html_file"
+              label="Triplet periodicity (HTML report)"/>
+    </outputs>
+    <!--<tests>-->
+        <!--<test>-->
+            <!--<param name="rdata_load" value="Prepare riboSeqR input (R data file)" ftype="RData" />-->
+            <!--<param name="fasta_file" value="rsem_chlamy236_deNovo.transcripts.fa" />-->
+            <!--<param name="include_lengths" value="25:30" />-->
+            <!--<param name="analyze_plot_lengths" value="26:30" />-->
+            <!--<output name="rdata_save" file="Triplet periodicity (R data file)" ftype="RData" />-->
+            <!--<output name="html_file" file="Triplet_periodicity_(HTML_report).html">-->
+                <!--<extra_files type="file" name="Periodicity-plot.png" value="Periodicity-plot.png" ftype="png" />-->
+                <!--<extra_files type="file" name="Periodicity-plot.pdf" value="Periodicity-plot.pdf" ftype="pdf" />-->
+            <!--</output>-->
+        <!--</test>-->
+    <!--</tests>-->
+    <help>
+Triplet Periodicity
+-------------------
+riboSeqR version: ``1.0.5``.
+
+This tool can be used to plot triplet periodicity for different read lengths.
+The inputs for this program are:
+
+#. Prepare riboSeqR input (R data file) from the previous step.
+#. FASTA format file of the reference transcriptome.
+
+   .. class:: infomark
+
+        Please note that the FASTA header of the transcriptome sequences must
+        match the sequence names from the SAM file.
+
+How to use?
+-----------
+Inputs
+......
+Select prepared R data file from the previous step.
+
+Select FASTA format file of the reference transcriptome, review/change other
+options if necessary and execute program.
+
+Outputs
+.......
+The following files will be generated on completion:
+
+#. Triplet periodicity (HTML report)
+
+   A HTML file with results and links to other output files - triplet
+   periodicity plot (PDF) and R script used for the session.
+
+#. Triplet periodicity (R data file)
+
+   Used as input for the next step - *Metagene analysis*.
+
+riboSeqR functions used
+.......................
+``findCDS``, ``frameCounting``, ``readingFrame`` and ``plotFS``.
+
+For detailed description of the functions and the options used, please consult
+the riboSeqR documentation.
+
+Links
+.....
+`riboSeqR &lt;http://bioconductor.org/packages/3.0/bioc/html/riboSeqR.html&gt;`_.
+
+    </help>
+    <citations>
+        <citation type="bibtex">
+            @Manual{,
+            title = {riboSeqR: Analysis of sequencing data from ribosome
+            profiling experiments.},
+            author = {Thomas J. Hardcastle},
+            year = {2014},
+            note = {R package version 1.0.5},
+            }
+        </citation>
+    </citations>
+</tool>

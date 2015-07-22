@@ -1,0 +1,181 @@
+<tool id="riboseqr_prepare_input" name="Prepare riboSeqR input" version="0.4.0">
+    <description>
+        (Step 1) Prepare alignment file (SAM format, Ribo-Seq or RNA-Seq alignments)
+        for riboSeqR analysis.
+    </description>
+    <requirements>
+        <requirement type="package" version="3.1.2">R</requirement>
+        <requirement type="package" version="6.2">readline</requirement>
+        <requirement type="package" version="2.3.10">rpy2</requirement>
+        <requirement type="package" version="0.4.0">riboseqr_wrapper_deps</requirement>
+    </requirements>
+    <stdio>
+        <exit_code range="1:"  level="fatal" description="Error" />
+    </stdio>
+    <command interpreter="python">riboseqr/prepare.py
+        #set $files_ribo = []
+        #set $files_rna = []
+        #set $replicates = []
+
+        #for $i, $s in enumerate($rnaseq.datasets)
+        #silent $replicates.append($s.replicate_name.value)
+        #silent $files_ribo.append($s.ribo_files.file_name)
+        #try:
+        #silent $s.rna_files
+        #except:
+        #pass
+        #else:
+        #silent $files_rna.append($s.rna_files.file_name)
+        #end try
+        #end for
+
+        #set $ribofiles = ", ".join($files_ribo)
+        #set $rnafiles = ", ".join($files_rna)
+        #set $replicate_names = ", ".join($replicates)
+
+        --ribo_files "$ribofiles"
+        --rna_files "$rnafiles"
+        --replicate_names "$replicate_names"
+        --seqnames "$seqnames"
+        --rdata_save "$rdata_save"
+        --sam_format
+        --html_file "$html_file"
+        --output_path "$html_file.files_path"
+    </command>
+    <inputs>
+        <conditional name="rnaseq">
+            <param name="have-rnaseq" type="boolean" truevalue="checked"
+                   falsevalue="unchecked" label="Have RNA-Seq data?"/>
+            <when value="checked">
+                <repeat name="datasets" title="Ribo and RNA-Seq alignment"
+                        default="1">
+                    <param type="text" name="replicate_name" size="20"
+                           label="Provide a common name for each replicate group"
+                           value=""/>
+                    <param format="sam" name="ribo_files" type="data"
+                           label="Ribo-Seq alignment file (SAM)"
+                           multiple="false"/>
+                    <param format="sam" name="rna_files" type="data"
+                           label="RNA-Seq alignment file (SAM)"
+                           multiple="false"/>
+                </repeat>
+            </when>
+            <when value="unchecked">
+                <repeat name="datasets" title="Ribo-Seq alignment" default="1">
+                    <param type="text" name="replicate_name" size="20"
+                           label="Provide a common name for each replicate group"
+                           value=""/>
+                    <param format="sam" name="ribo_files" type="data"
+                           label="Ribo-Seq alignment file (SAM)"
+                           multiple="false">
+                    </param>
+                </repeat>
+            </when>
+        </conditional>
+        <param name="seqnames" type="text" area="True" label="Transcript (seqname)
+                                                              names to be read" size="3x60"
+               help="[Optional] - only the mapped footprints for these transcripts will be
+                     used in further riboSeqR analysis. Multiple transcript names should
+                     be separated by commas. There should be no quotes around transcript names.">
+            <sanitizer>
+                <valid>
+                    <add value="|"/>
+                </valid>
+            </sanitizer>
+        </param>
+    </inputs>
+    <outputs>
+        <data format="RData" name="rdata_save"
+              label="Prepare riboSeqR input (R data file)"/>
+        <data format="html" name="html_file"
+              label="Prepare riboSeqR input (HTML report)"/>
+    </outputs>
+    <!--<tests>-->
+    <!--<test>-->
+    <!--<param name="ribo_files" value="12hRPF.sam" />-->
+    <!--<output name="html_file" file="Prepare_riboSeqR_input_(HTML_report).html">-->
+    <!--<extra_files type="file" name="RiboSeq file 1" value="RiboSeq file 1"/>-->
+    <!--</output>-->
+    <!--</test>-->
+    <!--</tests>-->
+    <help>
+Prepare riboSeqR Input
+----------------------
+riboSeqR version: ``1.0.5``.
+
+This tool can be used to prepare input data for riboSeqR from SAM
+format alignments of Ribo or RNA-Seq data to a reference transcriptome. You can
+do this alignment manually using bowtie or using the
+"Transcriptome Mapping" -> "Align to transcriptome using Bowtie"
+tool on `RiboGalaxy &lt;http://ribogalaxy.ucc.ie&gt;`_.
+
+The required input format for riboSeqR is mentioned in the
+"Getting Data" section of the documentation.
+
+How to use?
+-----------
+Inputs
+......
+Select SAM format Ribo-Seq alignment files in the input section.
+
+If you have RNA-Seq data, these can be included if the *"Have RNA-Seq data"*
+option is checked.
+
+Outputs
+.......
+The following files will be generated on completion:
+
+#. Prepare riboSeqR input (HTML report) - A HTML file with links to all other
+   output files.
+
+#. Generated riboSeqR format input files of RiboSeq and RNASeq data(if provided).
+   These files are plain text and lines have the following information -
+   strand, transcript name, alignment position, sequence.
+
+   .. class:: infomark
+
+        Please note the alignments are made **0-indexed**. Additional information on
+        how the SAM alignments are processed can be found below.
+
+#. R script used in this session.
+
+#. Prepare riboSeqR input (R data file) - used as input for the next step -
+   *Triplet Periodicity*.
+
+How are the SAM alignments processed?
+.....................................
+#. Lines starting with ``@`` are ignored.
+
+#. Lines having a ``FLAG=0`` are considered as successful alignments. These are
+   considered for the next step.
+
+#. Alignment start is located on ``column 4``. These are decremented by
+   1 as SAM alignments are 1-indexed.
+
+#. riboSeqR input file is written with the strand (``+``), transcript name,
+   alignment start and the aligned sequence.
+
+riboSeqR functions used
+.......................
+``readRibodata``.
+
+For detailed description of the functions and the options used, please consult
+the riboSeqR documentation.
+
+Links
+.....
+`riboSeqR &lt;http://bioconductor.org/packages/3.0/bioc/html/riboSeqR.html&gt;`_
+
+    </help>
+    <citations>
+        <citation type="bibtex">
+            @Manual{,
+            title = {riboSeqR: Analysis of sequencing data from ribosome
+            profiling experiments.},
+            author = {Thomas J. Hardcastle},
+            year = {2014},
+            note = {R package version 1.0.5},
+            }
+        </citation>
+    </citations>
+</tool>

@@ -1,0 +1,128 @@
+<tool id="riboseqr_ribosome_profile" name="Plot Ribosome Profile"
+      version="0.4.0">
+    <description>
+        (Step 4) Plot Ribosome profile using riboSeqR.
+    </description>
+    <requirements>
+      <requirement type="package" version="3.1.2">R</requirement>
+      <requirement type="package" version="6.2">readline</requirement>
+      <requirement type="package" version="2.3.10">rpy2</requirement>
+      <requirement type="package" version="0.4.0">riboseqr_wrapper_deps</requirement>
+    </requirements>
+    <stdio>
+        <exit_code range="1:"  level="fatal" description="Error" />
+    </stdio>
+    <command interpreter="python">riboseqr/ribosome_profile.py
+        --rdata_load "$rdata_load"
+        --transcript_name "$transcript_name"
+        --transcript_length "$transcript_length"
+        --transcript_cap "$transcript_cap"
+        --html_file "$html_file"
+        --output_path "$html_file.files_path"
+    </command>
+    <inputs>
+        <param name="rdata_load" format="RData" type="data"
+               label="Select Metagene analysis (R data file)"
+               multiple="false">
+            <validator type="expression"
+                       message="Please check if the correct RDA file is selected">value.name == "Metagene analysis (R data file)"</validator>
+        </param>
+
+        <param name="transcript_name" type="text" size="30"
+               label="Name of the transcript to be plotted"
+               help="Plot of ribosome footprint abundance and mRNA coverage
+               (if available) for a specific transcript.">
+            <validator type="expression" message="Please input a single transcript name">len(value.split(',')) == 1</validator>
+            <validator type="empty_field" message="Field requires a value"/>
+            <sanitizer>
+                <valid>
+                    <add value="|"/>
+                </valid>
+            </sanitizer>
+        </param>
+
+        <param name="transcript_length" type="text"
+               label="Select Ribosome footprint length"
+               help="" value="28">
+            <validator type="expression" message="Please input a single footprint length">len(value.split(',')) == 1</validator>
+            <validator type="expression" message="Please input a single footprint length">len(value.split(' ')) == 1</validator>
+            <validator type="empty_field" message="Field requires a value"/>
+        </param>
+
+        <param name="transcript_cap" type="integer" value="200"
+               label="Cap on the largest value that will be plotted as an
+               abundance of the ribosome footprint data"/>
+    </inputs>
+    <outputs>
+        <data format="html" name="html_file"
+              label="Plot ribosome profile (HTML report)"/>
+    </outputs>
+    <!--<tests>-->
+        <!--<test>-->
+            <!--<param name="rdata_load" value="Metagene analysis (R data file)" ftype="RData" />-->
+            <!--<param name="transcript_name" value="CUFF.37930.1"/>-->
+            <!--<param name="transcript_length" value="27"/>-->
+            <!--<param name="transcript_cap" value="200"/>-->
+            <!--<output name="html_file" file="Plot_ribosome_profile_(HTML_report).html">-->
+              <!--<extra_files type="file" name="Ribosome-profile-plot.pdf" value="Ribosome-profile-plot.pdf" ftype="pdf"/>-->
+              <!--<extra_files type="file" name="Ribosome-profile-plot_1.png" value="Ribosome-profile-plot_1.png" ftype="png"/>-->
+              <!--<extra_files type="file" name="Ribosome-profile-plot_2.png" value="Ribosome-profile-plot_2.png" ftype="png"/>-->
+              <!--<extra_files type="file" name="Ribosome-profile-plot_3.png" value="Ribosome-profile-plot_3.png" ftype="png"/>-->
+              <!--<extra_files type="file" name="Ribosome-profile-plot_4.png" value="Ribosome-profile-plot_4.png" ftype="png"/>-->
+            <!--</output>-->
+        <!--</test>-->
+    <!--</tests>-->
+    <help>
+Plot Ribosome Profile
+---------------------
+riboSeqR version: ``1.0.5``.
+
+This tool can be used for generating a ribosome profile plot for a given
+transcript. The input is the R data file from the previous
+step - Metagene analysis.
+
+How to use?
+-----------
+Inputs
+......
+Select *Metagene analysis (R data file)* from the previous step, enter name
+of the transcript to plot, review/change parameters and execute program.
+
+.. class:: warningmark
+
+        The transcript name should correspond to names used in SAM alignments
+        and FASTA file of the transcriptome.
+
+Outputs
+.......
+The following files will be generated on completion:
+
+Plot ribosome profile (HTML report)
+
+A HTML file with results and links to other output files - plot for the
+specified transcript (PDF) and R script used for the session.
+
+riboSeqR functions used
+.......................
+``plotTranscript``.
+
+For detailed description of the functions and the options used, please consult
+the riboSeqR documentation.
+
+Links
+.....
+`riboSeqR &lt;http://bioconductor.org/packages/3.0/bioc/html/riboSeqR.html&gt;`_.
+
+    </help>
+    <citations>
+        <citation type="bibtex">
+            @Manual{,
+            title = {riboSeqR: Analysis of sequencing data from ribosome
+            profiling experiments.},
+            author = {Thomas J. Hardcastle},
+            year = {2014},
+            note = {R package version 1.0.5},
+            }
+        </citation>
+    </citations>
+</tool>

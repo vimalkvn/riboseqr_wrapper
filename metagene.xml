@@ -1,0 +1,202 @@
+<tool id="riboseqr_metagene" name="Metagene Analysis" version="0.4.0">
+    <description>
+        (Step 3) Metagene analysis using riboSeqR.
+    </description>
+    <requirements>
+        <requirement type="package" version="3.1.2">R</requirement>
+        <requirement type="package" version="6.2">readline</requirement>
+        <requirement type="package" version="2.3.10">rpy2</requirement>
+        <requirement type="package" version="0.4.0">riboseqr_wrapper_deps</requirement>
+    </requirements>
+    <command interpreter="python">riboseqr/metagene.py
+        --rdata_load "$rdata_load"
+        --selected_lengths "$selected_lengths"
+        --selected_frames "$selected_frames"
+        --hit_mean "$hit_mean"
+        --unique_hit_mean "$unique_hit_mean"
+        --ratio_check "$ratio_check"
+        --plot_lengths "$plot_lengths"
+        --min5p "$min5p"
+        --max5p "$max5p"
+        --min3p "$min3p"
+        --max3p "$max3p"
+        --cap "$cap"
+        --plot_title "$plot_title"
+        --rdata_save "$rdata_save"
+        --html_file "$html_file"
+        --output_path "$html_file.files_path"
+    </command>
+    <inputs>
+        <param name="rdata_load" type="data" format="RData"
+               label="Select Triplet periodicity (R data file)"
+               multiple="false" optional="false"
+               help="&lt;br&gt;&lt;h4&gt;&lt;font color=&quot;#666666&quot;&gt;filterHits parameters (footprint reads to be used in the analysis)&lt;/font&gt;&lt;/h4&gt;">
+            <validator type="expression"
+                       message="Please check if the correct RDA file is selected">value.name == "Triplet periodicity (R data file)"</validator>
+        </param>
+
+        <param name="selected_lengths" type="text" value="27"
+               label="Length of ribosome footprint
+                      reads to be used in filtering (lengths)"
+               help="ex: 27,28. Multiple values must be comma-separated.
+                     Please consult Periodicity-report.txt." optional="false">
+            <validator type="empty_field" message="Field requires a value"/>
+        </param>
+
+        <param name="selected_frames" type="text" value=""
+               label="Frames of the ribosome footprint reads to be used in filtering
+                      (frames)"
+               help="ex: 1,0. Should be of equal length to the lengths parameter above.
+                     Multiple values must be comma-separated.
+                     Please consult the periodicity report from previous step."
+               optional="false">
+            <validator type="empty_field" message="Field requires a value"/>
+        </param>
+
+        <param name="hit_mean" size="4" type="integer" value="10"
+               label="Mean number of hits within a replicate group that
+                      should be observed to pass filtering (hitMean)" optional="false">
+            <validator type="empty_field" message="Field requires a value"/>
+        </param>
+
+        <param name="unique_hit_mean" size="4" type="integer" value="1"
+               label="Mean number of unique sequences within a replicate group
+                      that should be observed to pass filtering
+                      (unqhitMean)" optional="false">
+            <validator type="empty_field" message="Field requires a value"/>
+        </param>
+
+        <param name="ratio_check" type="boolean" checked="yes"
+               label="Check the ratios of the expected phase to maximal phase
+                      within the putative coding sequence
+                      (ratioCheck)" falsevalue="FALSE"
+               truevalue="TRUE"
+               help="&lt;br&gt;&lt;h4&gt;&lt;font color=&quot;#666666&quot;&gt;plotCDS parameters&lt;/font&gt;&lt;/h4&gt;"/>
+
+        <param name="plot_lengths" type="text"
+               label="Length of footprints to be
+                      plotted (lengths)"
+               help="Multiple values should be comma-separated.
+                     In that case, multiple plots will be produced" value="27"/>
+
+        <param name="min5p" label="The distance upstream of the translation
+                                   start to be plotted (min5p)" value="-20" type="integer"/>
+
+        <param name="max5p" label="The distance downstream of the translation
+                                   start to be plotted (max5p)" value="200" type="integer"/>
+
+        <param name="min3p" label="The distance upstream of the translation
+                                   end to be plotted (min3p)" value="-200" type="integer"/>
+
+        <param name="max3p" label="The distance downtream of the translation
+                                   end to be plotted (max3p)" value="20" type="integer"/>
+
+        <param name="cap"
+               label="If given, caps the height of plotted values (cap)"
+               value="" type="integer" optional="true"/>
+
+        <param name="plot_title"
+               label="Title of the plot (main)" type="text" size="30"
+               value=""/>
+    </inputs>
+    <stdio>
+        <exit_code range="1:"  level="fatal" description="Error" />
+    </stdio>
+    <outputs>
+        <data format="RData" name="rdata_save"
+              label="Metagene analysis (R data file)"/>
+        <data format="html" name="html_file"
+              label="Metagene analysis (HTML report)"/>
+    </outputs>
+    <!--<tests>-->
+    <!--<test>-->
+    <!--<param name="rdata_load" value="Triplet periodicity (R data file)" ftype="RData"/>-->
+    <!--<param name="hit_mean" value="50"/>-->
+    <!--<param name="unique_hit_mean" value="10"/>-->
+    <!--<param name="min5p" value="-20"/>-->
+    <!--<param name="max5p" value="200"/>-->
+    <!--<param name="min3p" value="-200"/>-->
+    <!--<param name="max3p" value="20"/>-->
+    <!--<param name="cap" value=""/>-->
+    <!--<param name="plot_title" value=""/>-->
+    <!--<output name="rdata_save" file="Metagene analysis (R data file)" ftype="RData"/>-->
+    <!--<output name="html_file" file="Metagene_analysis_(HTML_report).html">-->
+    <!--<extra_files type="file" name="Metagene-analysis-plot1.pdf" value="Metagene-analysis-plot1.pdf"/>-->
+    <!--<extra_files type="file" name="Metagene-analysis-plot1_1.png" value="Metagene-analysis-plot1_1.png"/>-->
+    <!--<extra_files type="file" name="Metagene-analysis-plot1_2.png" value="Metagene-analysis-plot1_2.png"/>-->
+    <!--<extra_files type="file" name="Metagene-analysis-plot1_3.png" value="Metagene-analysis-plot1_3.png"/>-->
+    <!--<extra_files type="file" name="Metagene-analysis-plot1_4.png" value="Metagene-analysis-plot1_4.png"/>-->
+    <!--<extra_files type="file" name="Metagene-analysis-plot2.pdf" value="Metagene-analysis-plot2.pdf"/>-->
+    <!--<extra_files type="file" name="Metagene-analysis-plot2_1.png" value="Metagene-analysis-plot2_1.png"/>-->
+    <!--<extra_files type="file" name="Metagene-analysis-plot2_2.png" value="Metagene-analysis-plot2_2.png"/>-->
+    <!--<extra_files type="file" name="Metagene-analysis-plot2_3.png" value="Metagene-analysis-plot2_3.png"/>-->
+    <!--<extra_files type="file" name="Metagene-analysis-plot2_4.png" value="Metagene-analysis-plot2_4.png"/>-->
+    <!--</output>-->
+    <!--</test>-->
+    <!--</tests>-->
+    <help>
+Metagene Analysis
+-----------------
+riboSeqR version: ``1.0.5``.
+
+The input is the R data file from the previous step - Triplet periodicity.
+
+How to use?
+-----------
+Inputs
+......
+#. Select *Triplet periodicity (R data file)* from the previous step.
+
+#. Specify length of ribosome footprint reads to be used in filtering
+   (lengths). Only these reads **will** be used in the analysis.
+
+#. Specify frames to consider. This information can be obtained
+   from the *Triplet periodicity (HTML report)*.
+
+   .. class:: warningmark
+
+       Please note that the frames specified should correspond to the
+       lengths of the reads.
+
+#. Under *plotCDS parameters*, input length of footprints to be considered for
+   generating the plot.
+
+#. Review/change other options if necessary and execute program.
+
+Outputs
+.......
+The following files will be generated on completion:
+
+#. Metagene analysis (HTML report)
+
+   A HTML file with results and links to other output files - plots for
+   specified lengths (PDF) and R script used for the session.
+
+#. Metagene analysis (R data file)
+
+   Used as input for the next step - *Plot Rribosome Profile*.
+
+riboSeqR functions used
+.......................
+``filterHits``.
+
+For detailed description of the functions and the options used, please consult
+the riboSeqR documentation.
+
+Links
+.....
+`riboSeqR &lt;http://bioconductor.org/packages/3.0/bioc/html/riboSeqR.html&gt;`_.
+
+    </help>
+    <citations>
+        <citation type="bibtex">
+            @Manual{,
+            title = {riboSeqR: Analysis of sequencing data from ribosome
+            profiling experiments.},
+            author = {Thomas J. Hardcastle},
+            year = {2014},
+            note = {R package version 1.0.5},
+            }
+        </citation>
+    </citations>
+</tool>
